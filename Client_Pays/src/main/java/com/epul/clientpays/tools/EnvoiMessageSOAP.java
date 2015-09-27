@@ -1,5 +1,6 @@
 package com.epul.clientpays.tools;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
@@ -17,6 +18,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.epul.clientpays.model.Pays;
 
 public class EnvoiMessageSOAP {
 
@@ -51,7 +55,8 @@ public class EnvoiMessageSOAP {
 	// Création de l’objet message
 	// On construit les différentes parties du message SOAP
 	// Il est possible de créer le message à partir d’un fichier externe.
-	public void creationMessage(String operation, String pays, String destination) {
+	public void creationMessage(String operation, String pays,
+			String destination) {
 		try {
 			messageFactory = MessageFactory.newInstance();
 			message = messageFactory.createMessage();
@@ -79,7 +84,7 @@ public class EnvoiMessageSOAP {
 	// Envoi du message
 	// dans le cas d’un message synchrone, l’envoi et la réception s’effectuent
 	// en une seule étape.
-	public void EmmissionReception(String destination, String pays)
+	public Object EmmissionReception(String destination, String pays)
 	// Les paramètres float a, float b et int oper
 	// ne servent que pour l’affichage des résultats
 	// Le message à émettre contient :
@@ -104,10 +109,92 @@ public class EnvoiMessageSOAP {
 			body = envelope.getBody();
 			// on examine les éléments renvoyés dans une liste
 			Iterator iter = body.getChildElements();
+
+			// nb Pays
+			ArrayList<Pays> listPays = new ArrayList<Pays>();
 			Node resultOuter = ((Node) iter.next()).getFirstChild();
-			Node result = resultOuter.getFirstChild();
+			
+			boolean isListPays = false;
+			
+			// getListPays
+			// nb element pays
+			for (int i = 0; i < resultOuter.getChildNodes().getLength(); i++) {
+				Node item = resultOuter.getChildNodes().item(i);
+				
+				if (item.getLocalName().equals("listpays")) {
+					isListPays = true;
+					int j;
+					Pays tmpPays = new Pays();
+					for (j = 0; j < item.getChildNodes().getLength(); j++) {
+						Node item2 = item.getChildNodes().item(j);
+						
+						// getPays
+						switch (item2.getLocalName()) {
+						case "nom":
+							tmpPays.setNom(item2.getFirstChild().toString());
+							break;
+
+						case "nomCapital":
+							tmpPays.setNomCapital(item2.getFirstChild().toString());
+							break;
+
+						case "nbHabitants":
+							tmpPays.setNbHabitants(Integer.parseInt(item2
+									.getFirstChild().toString()));
+							break;
+
+						default:
+							break;
+						}
+						// System.out
+						// .println("	Node :"
+						// + resultOuter.getChildNodes().item(i)
+						// .toString() + " .");
+						System.out.println("	Node :" + item2.toString() + " .");
+					}
+					listPays.add(tmpPays);
+				}
+				if(isListPays == false)
+					break;
+			}
+
+			//getPays
+			if(isListPays == false) {
+				Pays tmpPays = new Pays();
+					for (int i = 0; i < resultOuter.getChildNodes().getLength(); i++) {
+						Node item = resultOuter.getChildNodes().item(i);
+					
+					// getPays
+					switch (item.getLocalName()) {
+					case "nom":
+						tmpPays.setNom(item.getFirstChild().toString());
+						break;
+
+					case "nomCapital":
+						tmpPays.setNomCapital(item.getFirstChild().toString());
+						break;
+
+					case "nbHabitants":
+						tmpPays.setNbHabitants(Integer.parseInt(item
+								.getFirstChild().toString()));
+						break;
+
+					default:
+						break;
+					}
+					// System.out
+					// .println("	Node :"
+					// + resultOuter.getChildNodes().item(i)
+					// .toString() + " .");
+					System.out.println("	Node :" + item.toString() + " .");
+				}
+					listPays.add(tmpPays);
+			}
+
+			// Node result = resultOuter.getFirstChild();
+
 			// on affiche le résultat
-			System.out.println("pays :" + pays+ " .");
+			// System.out.println("pays :" + result.toString()+ " .");
 
 			// on crée le transformeur pour visualiser le message
 			transformerFactory = TransformerFactory.newInstance();
@@ -120,8 +207,15 @@ public class EnvoiMessageSOAP {
 			System.out.println();
 			// on ferme la connexion
 			connection.close();
+
+			// return result.getNodeValue();
+			// return result;
+			return listPays;
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+
+		return null;
 	}
 }
