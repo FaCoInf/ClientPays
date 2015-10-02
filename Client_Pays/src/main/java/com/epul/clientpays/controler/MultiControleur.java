@@ -91,7 +91,7 @@ public class MultiControleur {
 			
 			operation = "getPays";
 			unAppel.connexion();
-			unAppel.creationMessage(operation, pays, destination);
+			unAppel.creationMessage(operation, paysSelect, destination);
 			ArrayList<Pays> paysRecept = (ArrayList<Pays>) unAppel
 					.EmmissionReception(destenvoi, pays);
 			
