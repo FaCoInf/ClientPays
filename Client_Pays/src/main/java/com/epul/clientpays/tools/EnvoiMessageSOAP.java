@@ -1,4 +1,4 @@
-package com.epul.clientpays.tools;
+package main.java.com.epul.clientpays.tools;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.epul.clientpays.model.Pays;
+import main.java.com.epul.clientpays.model.Pays;
 
 public class EnvoiMessageSOAP {
 

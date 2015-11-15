@@ -1,4 +1,4 @@
-package com.epul.clientpays.model;
+package main.java.com.epul.clientpays.model;
 
 public class Pays {
 	private String nom;
